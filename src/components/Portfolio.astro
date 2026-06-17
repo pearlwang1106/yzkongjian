@@ -34,7 +34,7 @@ import { portfolio } from '../data/zh';
           <article class="group">
             <div class="overflow-hidden bg-white shadow-[0_4px_20px_-4px_rgba(26,26,26,0.08)] transition-shadow duration-500 group-hover:shadow-[0_12px_40px_-8px_rgba(26,26,26,0.14)]">
               <img
-                src={project.image}
+                src={`${import.meta.env.BASE_URL}${project.image.replace(/^\//, '')}`}
                 alt={project.title}
                 class="aspect-[4/3] w-full object-cover transition-all duration-700 group-hover:scale-[1.03]"
                 loading="lazy"
