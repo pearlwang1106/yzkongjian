@@ -1,54 +1,51 @@
 ---
-import { hero } from '../data/zh';
+import type { SiteContent } from '../i18n';
+import { imageSrc } from '../utils/image';
+
+interface Props {
+  content: SiteContent;
+}
+
+const { hero } = Astro.props.content;
 ---
 
-<section class="relative overflow-hidden bg-white">
-  <div class="pointer-events-none absolute -right-32 top-0 h-[480px] w-[480px] rounded-full bg-section-alt/80 blur-3xl" aria-hidden="true"></div>
-
-  <div class="relative mx-auto max-w-7xl px-5 py-16 md:px-8 md:py-24 lg:py-32">
-    <div class="grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
-      <div class="order-2 lg:order-1">
-        <p class="section-label mb-6">{hero.label}</p>
-        <h1 class="font-serif text-3xl leading-tight text-charcoal md:text-4xl lg:text-[2.75rem] lg:leading-[1.2]">
+<section class="bg-cream" data-hero>
+  <div class="mx-auto max-w-7xl px-5 pt-10 pb-12 md:px-8 md:pt-14 md:pb-16 lg:pt-16 lg:pb-20">
+    <div class="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+      <div>
+        <p class="section-label mb-6" data-animate>{hero.label}</p>
+        <h1
+          class="font-serif text-4xl font-normal leading-[1.2] text-charcoal md:text-5xl lg:text-[3.5rem] lg:leading-[1.15]"
+          data-animate
+          data-delay="1"
+        >
           {hero.title}
         </h1>
-        <p class="mt-6 max-w-lg text-base leading-relaxed text-muted md:text-lg">
+        <p class="mt-8 max-w-md text-sm leading-[2] text-muted md:text-base" data-animate data-delay="2">
           {hero.subtitle}
         </p>
-        <div class="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center">
-          <a
-            href="#contact"
-            class="inline-flex items-center justify-center gap-3 bg-charcoal px-8 py-4 text-[11px] font-medium uppercase tracking-[0.2em] text-white shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
-          >
+        <div class="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center" data-animate data-delay="3">
+          <a href="#contact" class="btn-primary gap-3">
             {hero.primaryBtn}
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-              <path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" stroke-width="1.2"></path>
+              <path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" stroke-width="1"></path>
             </svg>
           </a>
-          <a
-            href="#contact"
-            class="inline-flex items-center justify-center border border-charcoal/20 bg-white px-8 py-4 text-[11px] font-medium uppercase tracking-[0.2em] text-charcoal transition-all hover:border-charcoal/50 hover:bg-section-alt"
-          >
+          <a href="#portfolio" class="btn-outline">
             {hero.secondaryBtn}
           </a>
         </div>
       </div>
 
-      <div class="order-1 lg:order-2">
-        <div class="relative mx-auto max-w-md lg:ml-auto lg:max-w-[420px]">
-          <div
-            class="absolute -bottom-5 -right-5 h-full w-full border border-gold/50 lg:-bottom-6 lg:-right-6"
-            aria-hidden="true"
-          >
-          </div>
-          <div class="relative overflow-hidden shadow-[0_20px_50px_-12px_rgba(26,26,26,0.12)]">
-            <img
-              src={`${import.meta.env.BASE_URL}${hero.image.replace(/^\//, '')}`}
-              alt={hero.imageAlt}
-              class="aspect-[3/4] w-full object-cover transition-transform duration-700 hover:scale-[1.02]"
-              loading="eager"
-            />
-          </div>
+      <div class="relative lg:pl-4" data-animate="image" data-delay="2">
+        <div class="image-frame image-frame-back hidden lg:block" aria-hidden="true"></div>
+        <div class="relative overflow-hidden layout-offset-right">
+          <img
+            src={imageSrc(hero.image)}
+            alt={hero.imageAlt}
+            class="aspect-[3/4] w-full object-cover"
+            loading="eager"
+          />
         </div>
       </div>
     </div>

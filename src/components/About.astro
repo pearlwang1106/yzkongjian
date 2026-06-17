@@ -1,22 +1,26 @@
 ---
-import { about } from '../data/zh';
+import type { SiteContent } from '../i18n';
+
+interface Props {
+  content: SiteContent;
+}
+
+const { about } = Astro.props.content;
 ---
 
-<section id="about" class="bg-section-alt py-16 md:py-24">
-  <div class="mx-auto max-w-3xl px-5 text-center md:px-8">
-    <p class="section-label mb-8">{about.label}</p>
-    <div class="relative">
-      <span
-        class="pointer-events-none absolute -left-2 -top-6 font-serif text-6xl leading-none text-gold/15 md:-left-6 md:-top-8 md:text-8xl"
-        aria-hidden="true"
-      >
-        "
-      </span>
-      {
-        about.paragraphs.map((paragraph) => (
-          <p class="mb-6 text-sm leading-[2] text-muted last:mb-0 md:text-base">{paragraph}</p>
-        ))
-      }
-    </div>
+<section id="about" class="bg-section-alt py-20 md:py-28">
+  <div class="mx-auto max-w-4xl px-5 text-center md:px-8">
+    <p class="section-label mb-10" data-animate>{about.label}</p>
+    {
+      about.paragraphs.map((paragraph, index) => (
+        <p
+          class="mb-8 text-sm leading-[2.2] text-muted last:mb-0 md:text-base"
+          data-animate
+          data-delay={String(index + 1)}
+        >
+          {paragraph}
+        </p>
+      ))
+    }
   </div>
 </section>

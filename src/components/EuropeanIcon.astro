@@ -1,0 +1,23 @@
+---
+interface Props {
+  name: 'warmth' | 'transparency' | 'personal' | 'craft';
+  class?: string;
+}
+
+const { name, class: className = '' } = Astro.props;
+
+const icons = {
+  warmth: `<path d="M12 3v2M12 19v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M3 12h2M19 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1" fill="none"/>`,
+  transparency: `<rect x="5" y="3" width="14" height="18" rx="1" stroke="currentColor" stroke-width="1" fill="none"/><path d="M9 9h6M9 13h6M9 17h4" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>`,
+  personal: `<circle cx="9" cy="8" r="3" stroke="currentColor" stroke-width="1" fill="none"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="currentColor" stroke-width="1" stroke-linecap="round" fill="none"/><circle cx="17" cy="10" r="2.5" stroke="currentColor" stroke-width="1" fill="none"/><path d="M14 20c.3-2.2 1.8-4 4-4" stroke="currentColor" stroke-width="1" stroke-linecap="round" fill="none"/>`,
+  craft: `<path d="M4 20h16M6 20V10l6-6 6 6v10" stroke="currentColor" stroke-width="1" stroke-linejoin="round" fill="none"/><rect x="10" y="14" width="4" height="6" stroke="currentColor" stroke-width="1" fill="none"/><path d="M3 10h18" stroke="currentColor" stroke-width="1"/>`,
+};
+---
+
+<svg
+  class:list={['h-6 w-6 text-stone', className]}
+  viewBox="0 0 24 24"
+  fill="none"
+  aria-hidden="true"
+  set:html={icons[name]}
+/>

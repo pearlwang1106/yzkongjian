@@ -1,0 +1,90 @@
+---
+import type { SiteContent } from '../i18n';
+import { imageSrc } from '../utils/image';
+
+interface Props {
+  content: SiteContent;
+}
+
+const { philosophy } = Astro.props.content;
+
+const isReversed = (index: number) => index % 2 === 1;
+---
+
+<section class="border-y border-border bg-white">
+  {
+    philosophy.items.map((item, index) => {
+      const reversed = isReversed(index);
+
+      return (
+        <article
+          class:list={[
+            'mx-auto max-w-7xl px-5 py-12 md:px-8 md:py-16 lg:py-20',
+            index < philosophy.items.length - 1 && 'border-b border-border',
+          ]}
+        >
+          <div class="grid items-center gap-10 md:grid-cols-2 md:gap-12 lg:gap-16">
+            <div
+              class:list={[
+                'flex flex-col gap-5 md:gap-6',
+                reversed && 'md:order-2 md:items-end md:text-right',
+              ]}
+              data-animate
+              data-delay={String(index)}
+            >
+              <div
+                class:list={[
+                  'flex items-start gap-5',
+                  reversed && 'md:flex-row-reverse',
+                ]}
+              >
+                <span
+                  class="mt-2 hidden h-px w-8 shrink-0 bg-border md:block"
+                  data-animate="line"
+                  aria-hidden="true"
+                />
+                <h2 class="font-serif text-2xl font-normal leading-snug text-charcoal md:text-3xl lg:text-[2rem]">
+                  {item.title}
+                </h2>
+              </div>
+              <p
+                class:list={[
+                  'max-w-md text-sm leading-[2] text-muted md:text-[0.9375rem] md:leading-[2.1]',
+                  reversed && 'md:ml-auto',
+                ]}
+                data-animate
+                data-delay={String(index + 1)}
+              >
+                {item.description}
+              </p>
+            </div>
+
+            <div class:list={[reversed && 'md:order-1']}>
+              <div
+                class:list={[
+                  'relative',
+                  reversed ? 'layout-offset-up' : 'layout-offset-down',
+                ]}
+                data-animate="image"
+                data-delay={String(index + 1)}
+              >
+                <div class="relative overflow-hidden">
+                  <img
+                    src={imageSrc(item.image)}
+                    alt={item.imageAlt}
+                    class="aspect-[4/3] w-full object-cover transition-transform duration-700 hover:scale-[1.02]"
+                    loading="lazy"
+                  />
+                  <div
+                    class="pointer-events-none absolute inset-0 ring-1 ring-inset ring-charcoal/5"
+                    aria-hidden="true"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+      );
+    })
+  }
+</section>
