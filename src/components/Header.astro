@@ -1,0 +1,78 @@
+---
+import { site, nav } from '../data/zh';
+---
+
+<header class="sticky top-0 z-50 border-b border-charcoal/6 bg-white/90 backdrop-blur-md">
+  <div class="mx-auto flex max-w-7xl items-center justify-between px-5 py-5 md:px-8 md:py-6">
+    <a href="#" class="font-serif text-sm tracking-[0.2em] text-charcoal md:text-base">
+      {site.brand}
+    </a>
+
+    <nav class="hidden items-center gap-10 md:flex" aria-label="主导航">
+      {
+        nav.map((item) => (
+          <a
+            href={item.href}
+            class="relative text-[11px] font-medium uppercase tracking-[0.25em] text-charcoal transition-colors after:absolute after:-bottom-1 after:left-0 after:h-px after:w-0 after:bg-gold after:transition-all hover:after:w-full"
+          >
+            {item.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <button
+      id="menu-toggle"
+      type="button"
+      class="flex h-10 w-10 items-center justify-center md:hidden"
+      aria-label="打开菜单"
+      aria-expanded="false"
+    >
+      <span class="relative block h-3 w-5">
+        <span class="menu-line absolute left-0 top-0 block h-px w-full bg-charcoal transition-all"></span>
+        <span class="menu-line absolute left-0 top-1/2 block h-px w-full -translate-y-1/2 bg-charcoal transition-all"></span>
+        <span class="menu-line absolute bottom-0 left-0 block h-px w-full bg-charcoal transition-all"></span>
+      </span>
+    </button>
+  </div>
+
+  <nav
+    id="mobile-menu"
+    class="hidden border-t border-charcoal/6 bg-white px-5 py-6 md:hidden"
+    aria-label="移动端导航"
+  >
+    <ul class="flex flex-col gap-5">
+      {
+        nav.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              class="text-xs font-medium uppercase tracking-[0.25em] text-charcoal"
+            >
+              {item.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+</header>
+
+<script>
+  const toggle = document.getElementById('menu-toggle');
+  const menu = document.getElementById('mobile-menu');
+
+  toggle?.addEventListener('click', () => {
+    const isOpen = menu?.classList.toggle('hidden') === false;
+    toggle.setAttribute('aria-expanded', String(isOpen));
+    toggle.setAttribute('aria-label', isOpen ? '关闭菜单' : '打开菜单');
+  });
+
+  menu?.querySelectorAll('a').forEach((link) => {
+    link.addEventListener('click', () => {
+      menu.classList.add('hidden');
+      toggle?.setAttribute('aria-expanded', 'false');
+      toggle?.setAttribute('aria-label', '打开菜单');
+    });
+  });
+</script>
