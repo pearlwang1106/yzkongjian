@@ -1,4 +1,4 @@
-export type Locale = 'en' | 'zh';
+export type Locale = 'en' | 'zh' | 'ru';
 
 export type IconName = 'warmth' | 'transparency' | 'personal' | 'craft';
 
@@ -14,8 +14,7 @@ export interface SiteContent {
     closeMenu: string;
     mainNav: string;
     mobileNav: string;
-    langSwitch: string;
-    langSwitchLabel: string;
+    languageLabel: string;
   };
   nav: { label: string; href: string }[];
   philosophy: {

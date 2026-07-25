@@ -14,8 +14,7 @@ export const en: SiteContent = {
     closeMenu: "Close menu",
     mainNav: "Main navigation",
     mobileNav: "Mobile navigation",
-    langSwitch: "中文",
-    langSwitchLabel: "Switch to Chinese",
+    languageLabel: "Language",
   },
   nav: [
     { label: "Services", href: "#services" },

@@ -1,6 +1,6 @@
 ---
 import type { Locale, SiteContent } from '../i18n';
-import { getAlternateLocale, getLocalePath } from '../i18n';
+import { getLocalePath, localeHreflang, localeLabels, locales } from '../i18n';
 
 interface Props {
   content: SiteContent;
@@ -10,8 +10,6 @@ interface Props {
 const { content, locale } = Astro.props;
 const { site, nav, ui } = content;
 const homePath = getLocalePath(locale);
-const altLocale = getAlternateLocale(locale);
-const altPath = getLocalePath(altLocale);
 ---
 
 <header class="sticky top-0 z-50 border-b border-border bg-cream/95 backdrop-blur-sm" data-header>
@@ -34,14 +32,28 @@ const altPath = getLocalePath(altLocale);
         }
       </nav>
 
-      <a
-        href={altPath}
-        class="text-xs font-normal uppercase tracking-[0.25em] text-stone transition-colors hover:text-charcoal md:text-sm"
-        aria-label={ui.langSwitchLabel}
-        hreflang={altLocale === 'zh' ? 'zh-CN' : 'en'}
-      >
-        {ui.langSwitch}
-      </a>
+      <nav class="flex items-center gap-2.5 md:gap-3" aria-label={ui.languageLabel}>
+        {
+          locales.map((code, index) => (
+            <>
+              {index > 0 && <span class="text-border" aria-hidden="true">/</span>}
+              <a
+                href={getLocalePath(code)}
+                class:list={[
+                  'text-xs font-normal uppercase tracking-[0.2em] transition-colors md:text-sm',
+                  code === locale
+                    ? 'text-charcoal'
+                    : 'text-stone hover:text-charcoal',
+                ]}
+                hreflang={localeHreflang[code]}
+                aria-current={code === locale ? 'page' : undefined}
+              >
+                {localeLabels[code]}
+              </a>
+            </>
+          ))
+        }
+      </nav>
 
       <button
         id="menu-toggle"

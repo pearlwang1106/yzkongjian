@@ -19,11 +19,13 @@ html[data-locale='zh'] {
   --font-sans: "Noto Sans SC", system-ui, -apple-system, sans-serif;
 }
 
-html[data-locale='en'] .section-title {
+html[data-locale='en'] .section-title,
+html[data-locale='ru'] .section-title {
   letter-spacing: 0.01em;
 }
 
-html[data-locale='en'] .font-serif {
+html[data-locale='en'] .font-serif,
+html[data-locale='ru'] .font-serif {
   font-feature-settings: "liga" 1, "kern" 1;
 }
 

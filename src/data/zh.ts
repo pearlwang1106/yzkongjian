@@ -13,8 +13,7 @@ export const zh: SiteContent = {
     closeMenu: "关闭菜单",
     mainNav: "主导航",
     mobileNav: "移动端导航",
-    langSwitch: "EN",
-    langSwitchLabel: "切换至英文",
+    languageLabel: "语言",
   },
   nav: [
     { label: "设计服务", href: "#services" },
