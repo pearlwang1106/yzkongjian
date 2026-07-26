@@ -32,15 +32,45 @@ const homePath = getLocalePath(locale);
         }
       </nav>
 
-      <nav class="flex items-center gap-2.5 md:gap-3" aria-label={ui.languageLabel}>
-        {
-          locales.map((code, index) => (
-            <>
-              {index > 0 && <span class="text-border" aria-hidden="true">/</span>}
+      <div class="relative" data-lang-switcher>
+        <button
+          id="lang-toggle"
+          type="button"
+          class="flex h-10 w-10 items-center justify-center text-charcoal transition-opacity hover:opacity-50"
+          aria-label={ui.languageLabel}
+          aria-expanded="false"
+          aria-haspopup="true"
+          aria-controls="lang-menu"
+        >
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.4"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <circle cx="12" cy="12" r="9"></circle>
+            <path d="M3 12h18"></path>
+            <path d="M12 3a14 14 0 0 1 0 18"></path>
+            <path d="M12 3a14 14 0 0 0 0 18"></path>
+          </svg>
+        </button>
+
+        <nav
+          id="lang-menu"
+          class="absolute right-0 top-full z-50 mt-2 hidden min-w-[7.5rem] border border-border bg-cream py-2 shadow-sm"
+          aria-label={ui.languageLabel}
+        >
+          {
+            locales.map((code) => (
               <a
                 href={getLocalePath(code)}
                 class:list={[
-                  'text-xs font-normal uppercase tracking-[0.2em] transition-colors md:text-sm',
+                  'block px-4 py-2.5 text-xs font-normal tracking-[0.15em] transition-colors md:text-sm',
                   code === locale
                     ? 'text-charcoal'
                     : 'text-stone hover:text-charcoal',
@@ -50,10 +80,10 @@ const homePath = getLocalePath(locale);
               >
                 {localeLabels[code]}
               </a>
-            </>
-          ))
-        }
-      </nav>
+            ))
+          }
+        </nav>
+      </div>
 
       <button
         id="menu-toggle"
@@ -118,5 +148,31 @@ const homePath = getLocalePath(locale);
       toggle?.setAttribute('aria-expanded', 'false');
       toggle?.setAttribute('aria-label', openLabel);
     });
+  });
+
+  const langSwitcher = document.querySelector('[data-lang-switcher]');
+  const langToggle = document.getElementById('lang-toggle');
+  const langMenu = document.getElementById('lang-menu');
+
+  function setLangMenuOpen(open: boolean) {
+    langMenu?.classList.toggle('hidden', !open);
+    langToggle?.setAttribute('aria-expanded', String(open));
+  }
+
+  langToggle?.addEventListener('click', (event) => {
+    event.stopPropagation();
+    setLangMenuOpen(langMenu?.classList.contains('hidden') === true);
+  });
+
+  document.addEventListener('click', (event) => {
+    if (!(event.target instanceof Node) || !langSwitcher?.contains(event.target)) {
+      setLangMenuOpen(false);
+    }
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      setLangMenuOpen(false);
+    }
   });
 </script>

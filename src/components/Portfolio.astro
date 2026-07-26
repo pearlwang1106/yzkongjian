@@ -7,11 +7,15 @@ interface Props {
 }
 
 const { portfolio } = Astro.props.content;
+const styleFilters = portfolio.projects.map((p) => ({
+  key: p.styleKey,
+  label: p.category,
+}));
 ---
 
 <section id="portfolio" class="bg-cream py-20 md:py-28">
   <div class="mx-auto max-w-7xl px-5 md:px-8">
-    <div class="mb-16 flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
+    <div class="mb-10 flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
       <div data-animate>
         <p class="section-label mb-5">{portfolio.label}</p>
         <h2 class="font-serif text-3xl font-normal text-charcoal md:text-4xl lg:text-[2.75rem]">
@@ -24,35 +28,136 @@ const { portfolio } = Astro.props.content;
       </a>
     </div>
 
+    <div
+      class="mb-12 flex flex-wrap gap-x-5 gap-y-3 border-b border-border pb-6"
+      data-animate
+      data-portfolio-filters
+      role="tablist"
+      aria-label={portfolio.title}
+    >
+      <button
+        type="button"
+        class="portfolio-filter is-active text-[11px] font-normal uppercase tracking-[0.22em] text-charcoal transition-colors"
+        data-filter="all"
+        role="tab"
+        aria-selected="true"
+      >
+        {portfolio.filterAll}
+      </button>
+      {
+        styleFilters.map((filter) => (
+          <button
+            type="button"
+            class="portfolio-filter text-[11px] font-normal uppercase tracking-[0.22em] text-stone transition-colors hover:text-charcoal"
+            data-filter={filter.key}
+            role="tab"
+            aria-selected="false"
+          >
+            {filter.label}
+          </button>
+        ))
+      }
+    </div>
+
     <div class="grid gap-16 md:grid-cols-2 lg:gap-x-16 lg:gap-y-20">
       {
         portfolio.projects.map((project, index) => {
           const isEvenCol = index % 2 === 0;
+          const images = project.images;
+          const hasGallery = images.length > 1;
+          const isComingSoon = Boolean(project.comingSoon) || images.length === 0;
 
           return (
             <article
               class:list={[
-                'group',
+                'group portfolio-card',
                 !isEvenCol && 'layout-stagger-col-even',
                 isEvenCol ? 'md:pr-4 lg:pr-8' : 'md:pl-4 lg:pl-8',
               ]}
               data-animate
               data-delay={String((index % 2) + 1)}
+              data-style={project.styleKey}
             >
               <div
                 class:list={[
-                  'overflow-hidden',
+                  'relative overflow-hidden',
                   isEvenCol ? 'layout-offset-right' : 'layout-offset-left',
                   index % 4 < 2 ? 'layout-offset-down' : 'layout-offset-up',
                 ]}
                 data-animate="image"
+                data-gallery={hasGallery ? '' : undefined}
+                data-gallery-count={String(images.length)}
               >
-                <img
-                  src={imageSrc(project.image)}
-                  alt={project.title}
-                  class="aspect-[3/2] w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
-                  loading="lazy"
-                />
+                {isComingSoon ? (
+                  <div class="flex aspect-[3/2] w-full items-center justify-center bg-charcoal/[0.04] px-8 text-center">
+                    <p class="max-w-xs text-sm leading-relaxed text-muted">{portfolio.comingSoon}</p>
+                  </div>
+                ) : (
+                  <>
+                    {images.map((src, imgIndex) => (
+                      <img
+                        src={imageSrc(src)}
+                        alt={`${project.title} — ${imgIndex + 1}`}
+                        class:list={[
+                          'aspect-[3/2] w-full object-cover transition-opacity duration-500',
+                          imgIndex === 0 ? 'relative opacity-100' : 'absolute inset-0 opacity-0',
+                          hasGallery && 'pointer-events-none',
+                        ]}
+                        loading={index < 2 && imgIndex === 0 ? 'eager' : 'lazy'}
+                        data-gallery-slide
+                        data-index={String(imgIndex)}
+                        aria-hidden={imgIndex === 0 ? 'false' : 'true'}
+                      />
+                    ))}
+
+                    {hasGallery && (
+                      <div class="absolute inset-x-0 bottom-0 z-10 flex items-end justify-between gap-3 bg-gradient-to-t from-charcoal/45 to-transparent px-4 pb-3 pt-10">
+                        <div class="flex flex-wrap items-center gap-1.5" data-gallery-dots>
+                          {images.length <= 8
+                            ? images.map((_, dotIndex) => (
+                                <button
+                                  type="button"
+                                  class:list={[
+                                    'h-1.5 w-1.5 rounded-full transition-all',
+                                    dotIndex === 0 ? 'bg-cream scale-125' : 'bg-cream/45 hover:bg-cream/80',
+                                  ]}
+                                  data-gallery-dot
+                                  data-index={String(dotIndex)}
+                                  aria-label={`${dotIndex + 1} / ${images.length}`}
+                                />
+                              ))
+                            : null}
+                        </div>
+                        <div class="flex items-center gap-2">
+                          {images.length > 8 && (
+                            <span
+                              class="text-[10px] uppercase tracking-[0.18em] text-cream/90"
+                              data-gallery-counter
+                            >
+                              1 / {images.length}
+                            </span>
+                          )}
+                          <button
+                            type="button"
+                            class="flex h-8 w-8 items-center justify-center border border-cream/40 text-cream transition-colors hover:bg-cream/15"
+                            data-gallery-prev
+                            aria-label="Previous"
+                          >
+                            <span aria-hidden="true">‹</span>
+                          </button>
+                          <button
+                            type="button"
+                            class="flex h-8 w-8 items-center justify-center border border-cream/40 text-cream transition-colors hover:bg-cream/15"
+                            data-gallery-next
+                            aria-label="Next"
+                          >
+                            <span aria-hidden="true">›</span>
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </>
+                )}
               </div>
               <div
                 class:list={[
@@ -77,3 +182,102 @@ const { portfolio } = Astro.props.content;
     </div>
   </div>
 </section>
+
+<script>
+  function initPortfolio() {
+    const root = document.getElementById('portfolio');
+    if (!root) return;
+
+    const filters = root.querySelectorAll<HTMLButtonElement>('[data-filter]');
+    const cards = root.querySelectorAll<HTMLElement>('.portfolio-card');
+
+    filters.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const key = btn.dataset.filter ?? 'all';
+        filters.forEach((f) => {
+          const active = f === btn;
+          f.classList.toggle('is-active', active);
+          f.classList.toggle('text-charcoal', active);
+          f.classList.toggle('text-stone', !active);
+          f.setAttribute('aria-selected', active ? 'true' : 'false');
+        });
+        cards.forEach((card) => {
+          const match = key === 'all' || card.dataset.style === key;
+          card.classList.toggle('hidden', !match);
+        });
+      });
+    });
+
+    root.querySelectorAll<HTMLElement>('[data-gallery]').forEach((gallery) => {
+      const slides = Array.from(
+        gallery.querySelectorAll<HTMLImageElement>('[data-gallery-slide]'),
+      );
+      if (slides.length < 2) return;
+
+      let index = 0;
+      const dots = Array.from(
+        gallery.querySelectorAll<HTMLButtonElement>('[data-gallery-dot]'),
+      );
+      const counter = gallery.querySelector<HTMLElement>('[data-gallery-counter]');
+      const prev = gallery.querySelector<HTMLButtonElement>('[data-gallery-prev]');
+      const next = gallery.querySelector<HTMLButtonElement>('[data-gallery-next]');
+      let hoverTimer: number | undefined;
+
+      const show = (nextIndex: number) => {
+        index = (nextIndex + slides.length) % slides.length;
+        slides.forEach((slide, i) => {
+          const on = i === index;
+          slide.classList.toggle('opacity-100', on);
+          slide.classList.toggle('opacity-0', !on);
+          slide.classList.toggle('relative', on);
+          slide.classList.toggle('absolute', !on);
+          slide.classList.toggle('inset-0', !on);
+          slide.setAttribute('aria-hidden', on ? 'false' : 'true');
+        });
+        dots.forEach((dot, i) => {
+          const on = i === index;
+          dot.classList.toggle('bg-cream', on);
+          dot.classList.toggle('scale-125', on);
+          dot.classList.toggle('bg-cream/45', !on);
+        });
+        if (counter) counter.textContent = `${index + 1} / ${slides.length}`;
+      };
+
+      dots.forEach((dot) => {
+        dot.addEventListener('click', (e) => {
+          e.stopPropagation();
+          show(Number(dot.dataset.index ?? 0));
+        });
+      });
+      prev?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        show(index - 1);
+      });
+      next?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        show(index + 1);
+      });
+
+      gallery.addEventListener('mouseenter', () => {
+        if (window.matchMedia('(hover: hover)').matches) {
+          hoverTimer = window.setInterval(() => show(index + 1), 2200);
+        }
+      });
+      gallery.addEventListener('mouseleave', () => {
+        if (hoverTimer !== undefined) {
+          window.clearInterval(hoverTimer);
+          hoverTimer = undefined;
+        }
+      });
+    });
+  }
+
+  initPortfolio();
+  document.addEventListener('astro:page-load', initPortfolio);
+</script>
+
+<style>
+  .portfolio-filter.is-active {
+    color: var(--color-charcoal, #2c2c2c);
+  }
+</style>

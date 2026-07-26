@@ -57,11 +57,15 @@ export interface SiteContent {
     label: string;
     title: string;
     archiveLink: string;
+    filterAll: string;
+    comingSoon: string;
     projects: {
       title: string;
       category: string;
+      styleKey: string;
       tagline: string;
-      image: string;
+      images: string[];
+      comingSoon?: boolean;
     }[];
   };
   advantages: {
