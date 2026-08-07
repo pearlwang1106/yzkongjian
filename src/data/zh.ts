@@ -109,7 +109,17 @@ export const zh: SiteContent = {
     archiveLink: '预约设计',
     filterAll: '全部风格',
     comingSoon: '中式案例筹备中，欢迎提前预约风格方向沟通。',
+    featuredBadge: '主打系列',
     projects: [
+      {
+        title: '欧美风格',
+        category: '欧美',
+        styleKey: 'american',
+        tagline:
+          '深色木作、大理石台面与层次灯光交织，植物纹样与金属点缀并存——别墅级欧美主打系，一眼定调。',
+        images: [...siteImages.portfolio.american],
+        featured: true,
+      },
       {
         title: '法式轻奢',
         category: '法式',
@@ -130,13 +140,6 @@ export const zh: SiteContent = {
         styleKey: 'modern',
         tagline: '干净界面与层次灯光服务住宅，亦覆盖当代商业与办公空间能力展示。',
         images: [...siteImages.portfolio.modern],
-      },
-      {
-        title: '美式风格',
-        category: '美式',
-        styleKey: 'american',
-        tagline: '明亮聚合的起居氛围，木梁与轻松待客感，舒适而有性格。',
-        images: [...siteImages.portfolio.american],
       },
       {
         title: '俄式风格',
@@ -163,7 +166,7 @@ export const zh: SiteContent = {
         number: '01',
         icon: 'warmth',
         title: '多风格专长',
-        description: '法式轻奢、俄式古典、意式、现代、美式与中式，暖色可落地',
+        description: '法式轻奢、俄式古典、意式、现代、欧美与中式，暖色可落地',
       },
       {
         number: '02',
@@ -229,6 +232,12 @@ export const zh: SiteContent = {
     quote: '每一处线条与暖光，皆为家的温度而设计。',
     contact: '添加微信 · 免费咨询',
     button: '预约私人咨询',
+    wechatId: 'yzkongjian',
+    modalTitle: '添加微信',
+    modalHint: '复制微信号后，打开微信搜索添加，免费咨询。',
+    copyLabel: '复制微信号',
+    copiedLabel: '已复制',
+    closeLabel: '关闭',
   },
   footer: {
     about:
@@ -252,9 +261,5 @@ export const zh: SiteContent = {
       },
     ],
     copyright: '© 2026 空间设计工作室. 保留所有权利.',
-    social: [
-      { label: '微信', href: '#contact' },
-      { label: '小红书', href: '#' },
-    ],
   },
 };

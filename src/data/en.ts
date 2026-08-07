@@ -118,7 +118,17 @@ export const en: SiteContent = {
     archiveLink: 'Start a Project',
     filterAll: 'All styles',
     comingSoon: 'Chinese-style cases coming soon—ask us to reserve a consultation.',
+    featuredBadge: 'Signature Series',
     projects: [
+      {
+        title: 'Euro-American Signature',
+        category: 'Euro-American',
+        styleKey: 'american',
+        tagline:
+          'Dark timber, marble planes, and layered light—botanical pattern and metal accents for villa-level drama.',
+        images: [...siteImages.portfolio.american],
+        featured: true,
+      },
       {
         title: 'French Light Luxury',
         category: 'French',
@@ -142,14 +152,6 @@ export const en: SiteContent = {
         tagline:
           'Clean planes and layered light for residences—plus contemporary commercial and workplace spaces.',
         images: [...siteImages.portfolio.modern],
-      },
-      {
-        title: 'American Style',
-        category: 'American',
-        styleKey: 'american',
-        tagline:
-          'Bright, gathered living with timber beams and easy hospitality—comfort with character.',
-        images: [...siteImages.portfolio.american],
       },
       {
         title: 'Russian Classical',
@@ -247,6 +249,12 @@ export const en: SiteContent = {
     quote: 'Every line and warm glow is composed for the comfort of home.',
     contact: 'WeChat · Complimentary Consultation',
     button: 'Book a Consultation',
+    wechatId: 'yzkongjian',
+    modalTitle: 'Add on WeChat',
+    modalHint: 'Copy the WeChat ID, then search and add us in WeChat for a free consultation.',
+    copyLabel: 'Copy WeChat ID',
+    copiedLabel: 'Copied',
+    closeLabel: 'Close',
   },
   footer: {
     about:
@@ -270,9 +278,5 @@ export const en: SiteContent = {
       },
     ],
     copyright: '© 2026 Spatial Design Studio. All rights reserved.',
-    social: [
-      { label: 'WeChat', href: '#contact' },
-      { label: 'Xiaohongshu', href: '#' },
-    ],
   },
 };

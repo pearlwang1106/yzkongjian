@@ -59,6 +59,7 @@ export interface SiteContent {
     archiveLink: string;
     filterAll: string;
     comingSoon: string;
+    featuredBadge: string;
     projects: {
       title: string;
       category: string;
@@ -66,6 +67,7 @@ export interface SiteContent {
       tagline: string;
       images: string[];
       comingSoon?: boolean;
+      featured?: boolean;
     }[];
   };
   advantages: {
@@ -94,11 +96,16 @@ export interface SiteContent {
     quote: string;
     contact: string;
     button: string;
+    wechatId: string;
+    modalTitle: string;
+    modalHint: string;
+    copyLabel: string;
+    copiedLabel: string;
+    closeLabel: string;
   };
   footer: {
     about: string;
     columns: { title: string; links: { label: string; href: string }[] }[];
     copyright: string;
-    social: { label: string; href: string }[];
   };
 }

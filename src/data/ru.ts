@@ -118,7 +118,17 @@ export const ru: SiteContent = {
     archiveLink: 'Начать проект',
     filterAll: 'Все стили',
     comingSoon: 'Китайские кейсы готовятся — можно заранее записаться на консультацию по стилю.',
+    featuredBadge: 'Фирменная серия',
     projects: [
+      {
+        title: 'Евро-американский стиль',
+        category: 'Евро-американский',
+        styleKey: 'american',
+        tagline:
+          'Тёмное дерево, мрамор и многослойный свет — ботанические узоры и металл для вилльной драмы.',
+        images: [...siteImages.portfolio.american],
+        featured: true,
+      },
       {
         title: 'Французский light luxury',
         category: 'Французский',
@@ -142,14 +152,6 @@ export const ru: SiteContent = {
         tagline:
           'Чистые плоскости и многослойный свет для жилья — а также современные коммерческие и офисные пространства.',
         images: [...siteImages.portfolio.modern],
-      },
-      {
-        title: 'Американский стиль',
-        category: 'Американский',
-        styleKey: 'american',
-        tagline:
-          'Светлая, гостеприимная гостиная с деревянными балками — комфорт с характером.',
-        images: [...siteImages.portfolio.american],
       },
       {
         title: 'Русская классика',
@@ -247,6 +249,12 @@ export const ru: SiteContent = {
     quote: 'Каждая линия и тёплое свечение созданы для комфорта дома.',
     contact: 'WeChat · Бесплатная консультация',
     button: 'Записаться на консультацию',
+    wechatId: 'yzkongjian',
+    modalTitle: 'Добавить в WeChat',
+    modalHint: 'Скопируйте ID WeChat, затем найдите и добавьте нас в WeChat для бесплатной консультации.',
+    copyLabel: 'Скопировать WeChat ID',
+    copiedLabel: 'Скопировано',
+    closeLabel: 'Закрыть',
   },
   footer: {
     about:
@@ -270,9 +278,5 @@ export const ru: SiteContent = {
       },
     ],
     copyright: '© 2026 Студия пространственного дизайна. Все права защищены.',
-    social: [
-      { label: 'WeChat', href: '#contact' },
-      { label: 'Xiaohongshu', href: '#' },
-    ],
   },
 };

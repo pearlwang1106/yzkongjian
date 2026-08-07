@@ -17,8 +17,108 @@ const { cta } = Astro.props.content;
     <div class="mx-auto mt-10 h-px w-10 bg-stone/40" data-animate="line-center" data-delay="2" aria-hidden="true"></div>
     <p class="mt-10 text-sm leading-[2] text-stone md:text-base" data-animate data-delay="2">{cta.quote}</p>
     <p class="mt-10 font-serif text-xl tracking-wide text-white md:text-2xl" data-animate data-delay="3">{cta.contact}</p>
-    <a href="#contact" class="btn-primary mt-12 border border-white/20 bg-white text-charcoal hover:bg-stone hover:text-white md:mt-14" data-animate data-delay="4">
+    <button
+      type="button"
+      class="btn-primary mt-12 border border-white/20 bg-white text-charcoal hover:bg-stone hover:text-white md:mt-14"
+      data-animate
+      data-delay="4"
+      data-contact-open
+      aria-haspopup="dialog"
+      aria-controls="contact-dialog"
+    >
       {cta.button}
-    </a>
+    </button>
   </div>
 </section>
+
+<dialog id="contact-dialog" class="contact-dialog" aria-labelledby="contact-dialog-title">
+  <div class="px-8 py-10 text-center md:px-10 md:py-12">
+    <p class="section-label mb-5">{cta.label}</p>
+    <p id="contact-dialog-title" class="font-serif text-2xl tracking-wide text-charcoal md:text-[1.75rem]">
+      {cta.modalTitle}
+    </p>
+    <div class="mx-auto mt-6 h-px w-10 bg-border" aria-hidden="true"></div>
+    <p class="mt-6 text-sm leading-[1.9] text-muted">{cta.modalHint}</p>
+    <div class="mt-8 border border-border bg-white px-5 py-4">
+      <p class="text-[10px] uppercase tracking-[0.3em] text-stone">{cta.contact}</p>
+      <p class="mt-3 font-serif text-xl tracking-[0.14em] text-charcoal md:text-2xl" data-wechat-id>
+        {cta.wechatId}
+      </p>
+    </div>
+    <div class="mt-8 flex flex-col gap-3">
+      <button
+        type="button"
+        class="btn-primary w-full"
+        data-contact-copy
+        data-copy-label={cta.copyLabel}
+        data-copied-label={cta.copiedLabel}
+      >
+        {cta.copyLabel}
+      </button>
+      <button type="button" class="btn-outline w-full" data-contact-close>{cta.closeLabel}</button>
+    </div>
+  </div>
+</dialog>
+
+<script>
+  function initContactDialog() {
+    const dialog = document.getElementById('contact-dialog');
+    if (!(dialog instanceof HTMLDialogElement)) return;
+
+    // Escape main overflow / stacking contexts
+    if (dialog.parentElement !== document.body) {
+      document.body.appendChild(dialog);
+    }
+
+    const openBtn = document.querySelector<HTMLButtonElement>('[data-contact-open]');
+    const closeBtn = dialog.querySelector<HTMLButtonElement>('[data-contact-close]');
+    const copyBtn = dialog.querySelector<HTMLButtonElement>('[data-contact-copy]');
+    const wechatIdEl = dialog.querySelector<HTMLElement>('[data-wechat-id]');
+    const wechatId = wechatIdEl?.textContent?.trim() ?? '';
+
+    const open = () => {
+      if (!dialog.open) dialog.showModal();
+    };
+
+    const close = () => {
+      if (dialog.open) dialog.close();
+    };
+
+    openBtn?.addEventListener('click', open);
+    closeBtn?.addEventListener('click', close);
+
+    dialog.addEventListener('click', (event) => {
+      if (event.target === dialog) close();
+    });
+
+    dialog.addEventListener('cancel', (event) => {
+      event.preventDefault();
+      close();
+    });
+
+    copyBtn?.addEventListener('click', async () => {
+      if (!wechatId) return;
+
+      const label = copyBtn.dataset.copyLabel ?? '';
+      const copied = copyBtn.dataset.copiedLabel ?? '';
+
+      try {
+        await navigator.clipboard.writeText(wechatId);
+      } catch {
+        const input = document.createElement('input');
+        input.value = wechatId;
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand('copy');
+        input.remove();
+      }
+
+      copyBtn.textContent = copied;
+      window.setTimeout(() => {
+        copyBtn.textContent = label;
+      }, 1600);
+    });
+  }
+
+  initContactDialog();
+</script>

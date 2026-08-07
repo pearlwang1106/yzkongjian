@@ -7,10 +7,19 @@ interface Props {
 }
 
 const { portfolio } = Astro.props.content;
-const styleFilters = portfolio.projects.map((p) => ({
+/** Hide styles that still have no case photos (e.g. Chinese coming soon). */
+const visibleProjects = portfolio.projects.filter((p) => p.images.length > 0);
+const styleFilters = visibleProjects.map((p) => ({
   key: p.styleKey,
   label: p.category,
 }));
+
+const featuredProject = visibleProjects.find((p) => p.featured);
+const gridProjects = visibleProjects.filter((p) => !p.featured);
+
+/** Mosaic tiles shown beside the featured hero gallery */
+const mosaicCount = 5;
+const featuredMosaic = featuredProject?.images.slice(1, 1 + mosaicCount) ?? [];
 ---
 
 <section id="portfolio" class="bg-cream py-20 md:py-28">
@@ -59,9 +68,107 @@ const styleFilters = portfolio.projects.map((p) => ({
       }
     </div>
 
+    {
+      featuredProject && (
+        <article
+          class="portfolio-card portfolio-featured mb-16 md:mb-24"
+          data-animate
+          data-style={featuredProject.styleKey}
+        >
+          <div class="mb-6 flex flex-col gap-4 md:mb-8 md:flex-row md:items-end md:justify-between md:gap-10">
+            <div>
+              <p class="featured-badge mb-3 text-[10px] font-normal uppercase tracking-[0.35em] text-stone">
+                {portfolio.featuredBadge}
+              </p>
+              <h3 class="font-serif text-3xl font-normal text-charcoal md:text-4xl lg:text-[2.85rem] lg:leading-[1.1]">
+                {featuredProject.title}
+              </h3>
+              <p class="mt-2 text-[10px] font-normal uppercase tracking-[0.25em] text-stone">
+                {featuredProject.category}
+              </p>
+            </div>
+            {featuredProject.tagline && (
+              <p class="max-w-md text-sm leading-relaxed text-muted md:text-right md:text-[15px]">
+                {featuredProject.tagline}
+              </p>
+            )}
+          </div>
+
+          <div class="featured-mosaic" data-animate="image">
+            <div
+              class="featured-hero relative overflow-hidden"
+              data-gallery
+              data-gallery-count={String(featuredProject.images.length)}
+            >
+              {featuredProject.images.map((src, imgIndex) => (
+                <img
+                  src={imageSrc(src)}
+                  alt={`${featuredProject.title} — ${imgIndex + 1}`}
+                  class:list={[
+                    'h-full w-full object-cover transition-[opacity,transform] duration-700',
+                    imgIndex === 0 ? 'relative opacity-100' : 'absolute inset-0 opacity-0',
+                    'pointer-events-none',
+                  ]}
+                  loading={imgIndex === 0 ? 'eager' : 'lazy'}
+                  data-gallery-slide
+                  data-index={String(imgIndex)}
+                  aria-hidden={imgIndex === 0 ? 'false' : 'true'}
+                />
+              ))}
+
+              <div class="absolute inset-x-0 bottom-0 z-10 flex items-end justify-between gap-3 bg-gradient-to-t from-charcoal/55 via-charcoal/20 to-transparent px-4 pb-4 pt-16 md:px-6 md:pb-5">
+                <span
+                  class="text-[11px] uppercase tracking-[0.2em] text-cream/95"
+                  data-gallery-counter
+                >
+                  1 / {featuredProject.images.length}
+                </span>
+                <div class="flex items-center gap-2">
+                  <button
+                    type="button"
+                    class="flex h-10 w-10 items-center justify-center border border-cream/45 text-cream transition-colors hover:bg-cream/15"
+                    data-gallery-prev
+                    aria-label="Previous"
+                  >
+                    <span aria-hidden="true">‹</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="flex h-10 w-10 items-center justify-center border border-cream/45 text-cream transition-colors hover:bg-cream/15"
+                    data-gallery-next
+                    aria-label="Next"
+                  >
+                    <span aria-hidden="true">›</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {featuredMosaic.map((src, i) => (
+              <button
+                type="button"
+                class:list={['featured-tile group overflow-hidden', `featured-tile-${i + 1}`]}
+                data-featured-jump
+                data-index={String(i + 1)}
+                aria-label={`${featuredProject.title} — ${i + 2}`}
+              >
+                <img
+                  src={imageSrc(src)}
+                  alt=""
+                  class="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.05]"
+                  loading="lazy"
+                />
+                <span class="pointer-events-none absolute inset-0 bg-charcoal/0 transition-colors duration-500 group-hover:bg-charcoal/10" />
+              </button>
+            ))}
+          </div>
+        </article>
+      )
+    }
+
     <div class="grid gap-16 md:grid-cols-2 lg:gap-x-16 lg:gap-y-20">
       {
-        portfolio.projects.map((project, index) => {
+        gridProjects.map((project, index) => {
           const isEvenCol = index % 2 === 0;
           const images = project.images;
           const hasGallery = images.length > 1;
@@ -243,6 +350,9 @@ const styleFilters = portfolio.projects.map((p) => ({
         if (counter) counter.textContent = `${index + 1} / ${slides.length}`;
       };
 
+      // Expose for mosaic jump buttons
+      (gallery as HTMLElement & { __galleryShow?: (i: number) => void }).__galleryShow = show;
+
       dots.forEach((dot) => {
         dot.addEventListener('click', (e) => {
           e.stopPropagation();
@@ -270,6 +380,18 @@ const styleFilters = portfolio.projects.map((p) => ({
         }
       });
     });
+
+    const featured = root.querySelector<HTMLElement>('.portfolio-featured');
+    const featuredGallery = featured?.querySelector<
+      HTMLElement & { __galleryShow?: (i: number) => void }
+    >('[data-gallery]');
+    featured?.querySelectorAll<HTMLButtonElement>('[data-featured-jump]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const i = Number(btn.dataset.index ?? 0);
+        featuredGallery?.__galleryShow?.(i);
+        featuredGallery?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      });
+    });
   }
 
   initPortfolio();
@@ -279,5 +401,138 @@ const styleFilters = portfolio.projects.map((p) => ({
 <style>
   .portfolio-filter.is-active {
     color: var(--color-charcoal, #2c2c2c);
+  }
+
+  .featured-badge {
+    position: relative;
+    display: inline-block;
+  }
+
+  .featured-badge::after {
+    content: '';
+    display: block;
+    width: 2rem;
+    height: 1px;
+    margin-top: 0.75rem;
+    background-color: var(--color-border);
+  }
+
+  .featured-mosaic {
+    display: grid;
+    gap: 0.65rem;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto;
+  }
+
+  .featured-hero {
+    grid-column: 1 / -1;
+    aspect-ratio: 4 / 3;
+    min-height: 16rem;
+  }
+
+  .featured-tile {
+    position: relative;
+    aspect-ratio: 3 / 4;
+    cursor: pointer;
+    border: 0;
+    padding: 0;
+    background: transparent;
+  }
+
+  @media (min-width: 768px) {
+    .featured-mosaic {
+      gap: 0.85rem;
+      grid-template-columns: 1.55fr 1fr 1fr;
+      grid-template-rows: 14rem 14rem;
+      min-height: 28.85rem;
+    }
+
+    .featured-hero {
+      grid-column: 1;
+      grid-row: 1 / span 2;
+      aspect-ratio: auto;
+      height: 100%;
+      min-height: 0;
+    }
+
+    .featured-tile-1 {
+      grid-column: 2;
+      grid-row: 1;
+      aspect-ratio: auto;
+      height: 100%;
+    }
+
+    .featured-tile-2 {
+      grid-column: 3;
+      grid-row: 1;
+      aspect-ratio: auto;
+      height: 100%;
+    }
+
+    .featured-tile-3 {
+      grid-column: 2;
+      grid-row: 2;
+      aspect-ratio: auto;
+      height: 100%;
+    }
+
+    .featured-tile-4 {
+      grid-column: 3;
+      grid-row: 2;
+      aspect-ratio: auto;
+      height: 100%;
+    }
+
+    .featured-tile-5 {
+      display: none;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .featured-mosaic {
+      gap: 1rem;
+      grid-template-columns: 1.7fr 1fr 1fr 1fr;
+      grid-template-rows: 15.5rem 15.5rem;
+      min-height: 32rem;
+    }
+
+    .featured-tile-5 {
+      display: block;
+      grid-column: 4;
+      grid-row: 1 / span 2;
+      aspect-ratio: auto;
+      height: 100%;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .featured-mosaic[data-animate='image'] .featured-tile img {
+      opacity: 0;
+      transform: scale(1.06);
+      transition:
+        opacity 1s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .featured-mosaic[data-animate='image'].is-visible .featured-tile img {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .featured-mosaic[data-animate='image'].is-visible .featured-tile:nth-child(2) img {
+      transition-delay: 80ms;
+    }
+    .featured-mosaic[data-animate='image'].is-visible .featured-tile:nth-child(3) img {
+      transition-delay: 140ms;
+    }
+    .featured-mosaic[data-animate='image'].is-visible .featured-tile:nth-child(4) img {
+      transition-delay: 200ms;
+    }
+    .featured-mosaic[data-animate='image'].is-visible .featured-tile:nth-child(5) img {
+      transition-delay: 260ms;
+    }
+    .featured-mosaic[data-animate='image'].is-visible .featured-tile:nth-child(6) img {
+      transition-delay: 320ms;
+    }
   }
 </style>

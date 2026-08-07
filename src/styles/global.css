@@ -79,6 +79,64 @@ body {
   @apply inline-flex items-center justify-center border border-border bg-transparent px-8 py-3.5 text-sm font-normal uppercase tracking-[0.15em] text-charcoal transition-colors hover:border-charcoal;
 }
 
+/* Native <dialog> loses browser centering under Tailwind preflight */
+.contact-dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  margin: 0;
+  width: min(92vw, 24rem);
+  max-height: calc(100dvh - 2rem);
+  border: 0;
+  padding: 0;
+  overflow: auto;
+  background-color: var(--color-cream);
+  color: var(--color-charcoal);
+  box-shadow: 0 24px 80px -24px rgba(26, 26, 26, 0.45);
+}
+
+.contact-dialog:not([open]) {
+  display: none;
+}
+
+.contact-dialog[open] {
+  display: block;
+  animation: contact-dialog-in 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.contact-dialog::backdrop {
+  background-color: rgba(26, 26, 26, 0.62);
+  animation: contact-backdrop-in 0.28s ease;
+}
+
+@keyframes contact-dialog-in {
+  from {
+    opacity: 0;
+    scale: 0.98;
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+@keyframes contact-backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contact-dialog[open],
+  .contact-dialog::backdrop {
+    animation: none;
+  }
+}
+
 .link-arrow {
   @apply inline-flex items-center gap-4 text-[10px] font-normal uppercase tracking-[0.25em] text-charcoal;
 }
